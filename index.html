@@ -543,6 +543,150 @@
       margin-top: 1rem;
     }
 
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+      transition-delay: var(--reveal-delay, 0s);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-eyebrow.reveal { transform: translateY(14px); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal.is-visible {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    /* ── CLICKABLE CARDS ── */
+    .card[data-clickable],
+    .timeline-content[data-clickable] {
+      cursor: pointer;
+    }
+
+    .card[data-clickable]:hover,
+    .card[data-clickable]:focus-visible {
+      border-color: var(--gold);
+      box-shadow: 0 8px 24px -12px rgba(44,30,16,0.25);
+    }
+
+    .card[data-clickable]:focus-visible {
+      outline: 2px solid var(--gold-dark);
+      outline-offset: 2px;
+    }
+
+    .card-open-hint {
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      opacity: 0.75;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(44,30,16,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      max-width: 460px;
+      width: 100%;
+      padding: 2.4rem;
+      position: relative;
+      transform: translateY(16px) scale(0.98);
+      transition: transform 0.25s ease;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.is-open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.2rem;
+    }
+
+    .modal-close:hover { color: var(--gold-dark); }
+
+    .modal-issuer {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.9rem;
+      line-height: 1.3;
+    }
+
+    .modal-desc {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-status {
+      display: inline-block;
+      padding: 0.35rem 0.8rem;
+      background: var(--bg-alt);
+      border: 1px dashed var(--border);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: var(--text-mid);
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       nav { padding: 0 1.5rem; }
@@ -552,6 +696,8 @@
       #hero { padding: 5rem 1.5rem 4rem; }
       .hero-name { font-size: clamp(3rem, 12vw, 5rem); white-space: normal; }
       footer { padding: 3rem 1.5rem; }
+      .modal-box { padding: 1.8rem; }
+      .modal-overlay { padding: 1rem; }
     }
   </style>
 </head>
@@ -572,16 +718,16 @@
 
 <!-- HERO -->
 <section id="hero">
-  <p class="hero-eyebrow">Student of Economics &amp; Finance</p>
-  <h1 class="hero-name">Khadija <span class="hero-name-accent">Islam</span></h1>
-  <p class="hero-title">Aspiring analyst. Making global markets make sense.</p>
-  <p class="hero-bio">
+  <p class="hero-eyebrow reveal">Student of Economics &amp; Finance</p>
+  <h1 class="hero-name reveal">Khadija <span class="hero-name-accent">Islam</span></h1>
+  <p class="hero-title reveal">Aspiring analyst. Making global markets make sense.</p>
+  <p class="hero-bio reveal">
     Finance and Economics student based in East London, with a keen interest in
     global markets, financial analysis, and investment research. Actively seeking
     internship and placement opportunities in investment banking, asset management,
     and financial research.
   </p>
-  <div class="hero-ctas">
+  <div class="hero-ctas reveal">
     <a href="#education" class="btn-primary">View CV</a>
     <a href="#contact" class="btn-outline">Get in Touch</a>
     <a href="#" class="btn-outline">Download CV ↓</a>
@@ -918,6 +1064,119 @@
   </div>
   <p class="footer-copy">© 2025 Khadija Islam. All rights reserved.</p>
 </footer>
+
+<!-- CARD DETAIL MODAL -->
+<div class="modal-overlay" id="cardModal" aria-hidden="true">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    <p class="modal-issuer" id="modalIssuer"></p>
+    <h3 class="modal-title" id="modalTitle"></h3>
+    <p class="modal-desc" id="modalDesc"></p>
+    <p class="modal-meta" id="modalMeta"></p>
+    <span class="modal-status" id="modalStatus"></span>
+  </div>
+</div>
+
+<script>
+  /* ── SCROLL REVEAL ── */
+  (function initReveal() {
+    const groups = [
+      ...document.querySelectorAll('.card-grid'),
+      ...document.querySelectorAll('.timeline'),
+      ...document.querySelectorAll('.post-grid'),
+    ];
+
+    groups.forEach((group) => {
+      [...group.children].forEach((child, i) => {
+        child.classList.add('reveal');
+        child.style.setProperty('--reveal-delay', `${Math.min(i * 0.08, 0.4)}s`);
+      });
+    });
+
+    document.querySelectorAll('.section-header').forEach((el) => el.classList.add('reveal'));
+
+    // Skills/CV column titles inside experience section
+    document.querySelectorAll('.cv-col-title').forEach((el) => el.classList.add('reveal'));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    // One orchestrated hero entrance on load (not scroll-triggered — it's above the fold)
+    const heroEls = ['.hero-eyebrow', '.hero-name', '.hero-title', '.hero-bio', '.hero-ctas'];
+    heroEls.forEach((sel, i) => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      el.style.setProperty('--reveal-delay', `${i * 0.1}s`);
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-visible')));
+    });
+  })();
+
+  /* ── CLICKABLE CARDS + MODAL ── */
+  (function initCardModal() {
+    const overlay = document.getElementById('cardModal');
+    const modalIssuer = document.getElementById('modalIssuer');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalMeta = document.getElementById('modalMeta');
+    const modalStatus = document.getElementById('modalStatus');
+    const closeBtn = document.getElementById('modalClose');
+
+    function openModal(card) {
+      const issuer = card.querySelector('.card-issuer')?.textContent.trim() || '';
+      const badge = card.querySelector('.soon-badge')?.textContent.trim() || '';
+      const title = card.querySelector('.card-title')?.textContent.trim() || '';
+      const desc = card.querySelector('.card-desc')?.textContent.trim() || '';
+      const meta = card.querySelector('.card-meta')?.textContent.trim() || '';
+      const isSoon = card.classList.contains('card-soon');
+
+      modalIssuer.textContent = badge || issuer;
+      modalTitle.textContent = title;
+      modalDesc.textContent = desc;
+      modalMeta.textContent = meta;
+      modalStatus.textContent = isSoon
+        ? 'In progress — the workbook will be linked here once it\'s finished.'
+        : 'File not attached yet — the certificate will download from here once uploaded.';
+
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      closeBtn.focus();
+    }
+
+    function closeModal() {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    document.querySelectorAll('#certificates .card, #models .card').forEach((card) => {
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.dataset.clickable = 'true';
+      card.addEventListener('click', () => openModal(card));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(card);
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  })();
+</script>
 
 </body>
 </html>
