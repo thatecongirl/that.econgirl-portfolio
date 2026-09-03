@@ -1,1 +1,587 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Commodity Tracker — that.econgirl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F6F0E8;
+    --bg-alt: #EFE6D8;
+    --bg-panel: #FDFAF5;
+    --bg-panel-alt: #F6F0E8;
+    --panel-dark: #3B2A18;
+    --panel-darker: #241606;
+    --border: #DDD0BB;
+    --border-dark: #55402A;
+    --text: #2C1E10;
+    --text-on-dark: #F3E9D8;
+    --text-mid: #7A6040;
+    --text-muted: #A8916E;
+    --text-muted-on-dark: #C6AD8A;
+    --gold: #C9A44A;
+    --gold-bright: #E8D09A;
+    --gold-dark: #9E7B2A;
+    --up: #6B8F5C;
+    --down: #B5573D;
+    --font-display: 'DM Sans', sans-serif;
+    --font-mono: 'DM Sans', sans-serif;
+    --font-serif: 'Cormorant Garamond', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  a { color: inherit; }
+
+  header {
+    padding: 2.5rem 1.5rem 1.8rem;
+    background: var(--panel-dark);
+    color: var(--text-on-dark);
+    border-bottom: 3px solid var(--gold);
+    margin-bottom: 2.5rem;
+  }
+
+  header .header-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    margin-bottom: 0.6rem;
+  }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 5vw, 3rem);
+    color: var(--text-on-dark);
+    margin-bottom: 0.6rem;
+  }
+
+  .subhead {
+    color: var(--text-muted-on-dark);
+    font-size: 0.92rem;
+    max-width: 560px;
+  }
+
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted-on-dark);
+    margin-bottom: 2rem;
+    padding: 0.7rem 1rem;
+    background: var(--panel-darker);
+    border: 1px solid var(--border-dark);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--up);
+    flex-shrink: 0;
+  }
+
+  .status-dot.stale { background: var(--down); }
+
+  /* ── METAL GRID ── */
+  .metal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .metal-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 1.6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--metal-color, var(--gold));
+  }
+
+  .metal-name-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .metal-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .metal-symbol {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .metal-price {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.3rem;
+  }
+
+  .metal-price-unit {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .metal-change {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .metal-change.up { color: var(--up); }
+  .metal-change.down { color: var(--down); }
+
+  .metal-secondary {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-mid);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gold-dark);
+    margin-bottom: 0.4rem;
+  }
+
+  .section-desc {
+    color: var(--text-mid);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    max-width: 560px;
+  }
+
+  section { margin-bottom: 3.5rem; }
+
+  /* ── WAS I RIGHT LOG ── */
+  .log-form {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 1.4rem;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.8rem;
+    align-items: end;
+  }
+
+  .log-form label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .log-form select,
+  .log-form input,
+  .log-form textarea {
+    width: 100%;
+    background: var(--bg-panel-alt);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.55rem 0.7rem;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+  }
+
+  .log-form textarea {
+    grid-column: 1 / -1;
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .log-submit {
+    grid-column: 1 / -1;
+    background: var(--gold);
+    color: #16130A;
+    border: none;
+    padding: 0.65rem 1.2rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    justify-self: start;
+  }
+
+  .log-submit:hover { background: var(--gold-bright); }
+
+  .log-entries { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .log-entry {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 1rem 1.2rem;
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+
+  .log-entry .tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--border);
+    text-transform: uppercase;
+  }
+
+  .log-entry .tag.up { color: var(--up); border-color: var(--up); }
+  .log-entry .tag.down { color: var(--down); border-color: var(--down); }
+
+  .log-entry .price-at-log { font-family: var(--font-mono); color: var(--text-mid); font-size: 0.78rem; }
+
+  .log-entry .note { color: var(--text-mid); }
+
+  .log-outcome-btns { display: flex; gap: 0.4rem; }
+
+  .log-outcome-btns button {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .log-outcome-btns button.active.right { color: var(--up); border-color: var(--up); }
+  .log-outcome-btns button.active.wrong { color: var(--down); border-color: var(--down); }
+
+  .log-delete {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .log-delete:hover { color: var(--down); }
+
+  .log-empty {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px dashed var(--border);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer a { color: var(--gold); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .log-form { grid-template-columns: 1fr; }
+    .log-entry { grid-template-columns: 1fr; text-align: left; }
+    .log-outcome-btns { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <p class="eyebrow">that.econgirl / personal tracker</p>
+    <h1>Commodity Tracker</h1>
+    <p class="subhead">Gold, silver and platinum spot prices in GBP, refreshed daily, plus a running log of my own calls — so I can actually check whether I was right.</p>
+  </div>
+</header>
+
+<main>
+  <div class="status-bar">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">Loading latest prices…</span>
+  </div>
+
+  <section id="prices">
+    <div class="metal-grid" id="metalGrid">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <section id="log">
+    <p class="section-title">Was I Right?</p>
+    <p class="section-desc">Log a call when you make one — direction, price at the time, and why — then come back and mark whether it landed. Saved locally in this browser.</p>
+
+    <form class="log-form" id="logForm">
+      <div>
+        <label for="logMetal">Metal</label>
+        <select id="logMetal">
+          <option value="gold">Gold</option>
+          <option value="silver">Silver</option>
+          <option value="platinum">Platinum</option>
+        </select>
+      </div>
+      <div>
+        <label for="logDirection">Call</label>
+        <select id="logDirection">
+          <option value="up">Going up</option>
+          <option value="down">Going down</option>
+        </select>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <label for="logNote">Reasoning</label>
+        <textarea id="logNote" placeholder="e.g. Fed signalling a rate cut next month, weaker dollar should push gold up"></textarea>
+      </div>
+      <button type="submit" class="log-submit">Log this call</button>
+    </form>
+
+    <div class="log-entries" id="logEntries"></div>
+  </section>
+</main>
+
+<footer>
+  <span>Data refreshes daily via GitHub Actions. Not investment advice — personal tracking only.</span>
+  <a href="https://thatecongirls-blog.beehiiv.com" target="_blank">Back to the blog →</a>
+</footer>
+
+<script>
+  const METAL_META = {
+    gold:     { label: 'Gold',     symbol: 'XAU', color: '#C9A44A' },
+    silver:   { label: 'Silver',   symbol: 'XAG', color: '#A8916E' },
+    platinum: { label: 'Platinum', symbol: 'XPT', color: '#6B4F32' },
+  };
+
+  const GBP_PER_TROY_OZ_TO_GRAM = 1 / 31.1034768;
+
+  function fmtGBP(n) {
+    if (n == null || isNaN(n)) return '—';
+    return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(n);
+  }
+
+  function renderMetalGrid(data) {
+    const grid = document.getElementById('metalGrid');
+    grid.innerHTML = '';
+
+    Object.keys(METAL_META).forEach((key) => {
+      const meta = METAL_META[key];
+      const entry = data && data.metals ? data.metals[key] : null;
+      const price = entry ? entry.price_gbp_oz : null;
+      const change = entry ? entry.change_percent : null;
+      const gramPrice = price != null ? price * GBP_PER_TROY_OZ_TO_GRAM : null;
+
+      const card = document.createElement('div');
+      card.className = 'metal-card';
+      card.style.setProperty('--metal-color', meta.color);
+
+      const changeClass = change == null ? '' : (change >= 0 ? 'up' : 'down');
+      const changeArrow = change == null ? '' : (change >= 0 ? '▲' : '▼');
+      const changeText = change == null ? 'no change data' : `${changeArrow} ${Math.abs(change).toFixed(2)}%`;
+
+      card.innerHTML = `
+        <div class="metal-name-row">
+          <span class="metal-name">${meta.label}</span>
+          <span class="metal-symbol">${meta.symbol}/GBP</span>
+        </div>
+        <div class="metal-price">${fmtGBP(price)} <span class="metal-price-unit">/ oz</span></div>
+        <span class="metal-change ${changeClass}">${changeText}</span>
+        <div class="metal-secondary">
+          <span>Per gram</span>
+          <span>${fmtGBP(gramPrice)}</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderStatus(data, error) {
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+
+    if (error || !data || !data.updated_at) {
+      dot.classList.add('stale');
+      text.textContent = "No price data yet — this fills in once the daily GitHub Action has run at least once.";
+      return;
+    }
+
+    const updated = new Date(data.updated_at);
+    const ageHours = (Date.now() - updated.getTime()) / 36e5;
+    const isStale = ageHours > 48 || isNaN(ageHours);
+
+    dot.classList.toggle('stale', isStale);
+    text.textContent = isStale
+      ? `Prices last updated ${updated.toLocaleString('en-GB')} — looking stale, check the GitHub Action ran.`
+      : `Prices last updated ${updated.toLocaleString('en-GB')}`;
+  }
+
+  async function loadPrices() {
+    try {
+      const res = await fetch('../data/prices.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('fetch failed');
+      const data = await res.json();
+      renderMetalGrid(data);
+      renderStatus(data, null);
+    } catch (err) {
+      renderMetalGrid(null);
+      renderStatus(null, err);
+    }
+  }
+
+  loadPrices();
+
+  /* ── WAS I RIGHT LOG (localStorage) ── */
+  const STORAGE_KEY = 'econgirl_commodity_log';
+
+  function getEntries() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveEntries(entries) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }
+
+  function renderLog() {
+    const container = document.getElementById('logEntries');
+    const entries = getEntries().slice().reverse();
+
+    if (entries.length === 0) {
+      container.innerHTML = '<div class="log-empty">No calls logged yet — make one above.</div>';
+      return;
+    }
+
+    container.innerHTML = entries.map((entry) => {
+      const meta = METAL_META[entry.metal] || METAL_META.gold;
+      const dateStr = new Date(entry.timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      return `
+        <div class="log-entry" data-id="${entry.id}">
+          <span class="tag ${entry.direction}">${meta.label} ${entry.direction === 'up' ? '▲' : '▼'}</span>
+          <span class="price-at-log">${dateStr}</span>
+          <span class="note">${entry.note ? escapeHtml(entry.note) : 'No reasoning noted'}</span>
+          <div class="log-outcome-btns">
+            <button data-outcome="right" class="${entry.outcome === 'right' ? 'active right' : ''}">Right</button>
+            <button data-outcome="wrong" class="${entry.outcome === 'wrong' ? 'active wrong' : ''}">Wrong</button>
+          </div>
+          <button class="log-delete" title="Delete">&times;</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  document.getElementById('logForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const metal = document.getElementById('logMetal').value;
+    const direction = document.getElementById('logDirection').value;
+    const note = document.getElementById('logNote').value.trim();
+
+    const entries = getEntries();
+    entries.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      metal, direction, note,
+      timestamp: new Date().toISOString(),
+      outcome: null,
+    });
+    saveEntries(entries);
+    document.getElementById('logNote').value = '';
+    renderLog();
+  });
+
+  document.getElementById('logEntries').addEventListener('click', (e) => {
+    const entryEl = e.target.closest('.log-entry');
+    if (!entryEl) return;
+    const id = entryEl.dataset.id;
+    let entries = getEntries();
+
+    if (e.target.matches('[data-outcome]')) {
+      const outcome = e.target.dataset.outcome;
+      entries = entries.map((en) => en.id === id ? { ...en, outcome: en.outcome === outcome ? null : outcome } : en);
+      saveEntries(entries);
+      renderLog();
+    } else if (e.target.classList.contains('log-delete')) {
+      entries = entries.filter((en) => en.id !== id);
+      saveEntries(entries);
+      renderLog();
+    }
+  });
+
+  renderLog();
+</script>
+
+</body>
+</html>
