@@ -1,19 +1,19 @@
 {
-  "updated_at": "2026-10-12T14:13:58.884Z",
+  "updated_at": "2026-10-12T16:39:33.440Z",
   "currency": "GBP",
   "unit": "troy_ounce",
   "metals": {
     "gold": {
-      "price_gbp_oz": 3153.485,
-      "change_percent": -0.5103070991841311
+      "price_gbp_oz": 3154.67,
+      "change_percent": 0.03757747381071879
     },
     "silver": {
-      "price_gbp_oz": 45.6872,
-      "change_percent": -0.5199669032791987
+      "price_gbp_oz": 45.6602,
+      "change_percent": -0.05909751527778879
     },
     "platinum": {
-      "price_gbp_oz": 1265.14,
-      "change_percent": -0.14601535923724016
+      "price_gbp_oz": 1266.67,
+      "change_percent": 0.12093523246438913
     }
   }
 }
