@@ -706,6 +706,21 @@
       color: var(--text-mid);
     }
 
+    .modal-file-btn {
+      display: inline-block;
+      padding: 0.7rem 1.4rem;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .modal-file-btn:hover { background: var(--gold-dark); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       nav { padding: 0 1.5rem; }
@@ -787,7 +802,7 @@
       <p class="card-meta">In Progress · McKinsey Academy</p>
     </div>
 
-    <div class="card">
+    <div class="card" data-file="assets/bloomberg-certificate.pdf">
       <div class="card-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       </div>
@@ -866,7 +881,7 @@
       <p class="card-meta" style="margin-top:1rem;">Expected — Summer 2027</p>
     </div>
 
-    <div class="card card-soon">
+    <div class="card card-soon" data-file="https://thatecongirl.github.io/that.econgirl-portfolio/tracker/" data-label="Open tracker →">
       <span class="soon-badge">Completed</span>
       <h3 class="card-title">Precious Metals Commodity Tracker</h3>
       <p class="card-desc">Built a website tracking Gold, Silver, and Platinum for personal investment. Can also record prediction which save to local device.</p>
@@ -1165,6 +1180,7 @@
     <p class="modal-desc" id="modalDesc"></p>
     <p class="modal-meta" id="modalMeta"></p>
     <span class="modal-status" id="modalStatus"></span>
+    <a class="modal-file-btn" id="modalFileBtn" href="#" target="_blank" rel="noopener" style="display:none;">View file →</a>
   </div>
 </div>
 
@@ -1232,9 +1248,21 @@
       modalTitle.textContent = title;
       modalDesc.textContent = desc;
       modalMeta.textContent = meta;
-      modalStatus.textContent = isSoon
-        ? 'In progress — the workbook will be linked here once it\'s finished.'
-        : 'File not attached yet — the certificate will download from here once uploaded.';
+      const fileBtn = document.getElementById('modalFileBtn');
+      const file = card.dataset.file;
+
+      if (file) {
+        fileBtn.href = file;
+        fileBtn.textContent = card.dataset.label || 'View file →';
+        fileBtn.style.display = 'inline-block';
+        modalStatus.style.display = 'none';
+      } else {
+        fileBtn.style.display = 'none';
+        modalStatus.style.display = 'inline-block';
+        modalStatus.textContent = isSoon
+          ? 'In progress — the workbook will be linked here once it\'s finished.'
+          : 'File not attached yet — the certificate will download from here once uploaded.';
+      }
 
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
